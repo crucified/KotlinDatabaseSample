@@ -15,8 +15,7 @@ import kotlinx.android.synthetic.main.activity_main.*
 
 class MainActivity : AppCompatActivity() {
 
-    private val db: Database
-        get() = Database(applicationContext)
+    private val db by lazy { Database(applicationContext) }
 
 
     override fun onCreate(savedInstanceState: Bundle?) {
@@ -32,19 +31,16 @@ class MainActivity : AppCompatActivity() {
     override fun onResume() {
         super.onResume()
         val names = db.artNames()
-        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1,  names)
+        val adapter = ArrayAdapter<String>(this, android.R.layout.simple_expandable_list_item_1, names)
 
         listView.adapter = adapter
-        listView.onItemClickListener = object: AdapterView.OnItemClickListener {
-            override fun onItemClick(parent: AdapterView<*>?, view: View?, position: Int, id: Long) {
-                val selectedName = names[position]
-                val art = db.artDetails(selectedName)
-                if (art == null) {
-                    showAlert("Invalid activity. Some error occurred")
-                } else {
-                    goToArtActivity(art)
-                }
-
+        listView.onItemClickListener = AdapterView.OnItemClickListener { parent, view, position, id ->
+            val selectedName = names[position]
+            val art = db.artDetails(selectedName)
+            if (art == null) {
+                showAlert("Invalid activity. Some error occurred")
+            } else {
+                goToArtActivity(art)
             }
         }
     }
@@ -75,9 +71,9 @@ class MainActivity : AppCompatActivity() {
 }
 
 fun android.app.Activity.showAlert(text: String, title: String = "Error") {
-    val dialog = AlertDialog.Builder(this)
-    dialog.setTitle("Error")
-    dialog.setMessage(text)
-    dialog.setNeutralButton("Okay", null)
-    dialog.show()
+    AlertDialog.Builder(this)
+            .setTitle("Error")
+            .setMessage(text)
+            .setNeutralButton("Okay", null)
+            .show()
 }

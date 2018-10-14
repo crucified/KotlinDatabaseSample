@@ -31,14 +31,12 @@ class AddArtActivity : AppCompatActivity() {
         setContentView(R.layout.activity_add_art)
 
         val isMutable = intent.getBooleanExtra(IS_MUTABLE, true)
-        if (isMutable == false) {
+        if (!isMutable) {
             imageView.isEnabled =  false
             imageView.setImageBitmap(selectedArt!!.image)
             editText.isEnabled = false
             editText.setText(selectedArt!!.name)
             button.visibility = View.INVISIBLE
-        } else {
-            // do nothing
         }
     }
 
@@ -52,24 +50,23 @@ class AddArtActivity : AppCompatActivity() {
 
 
     override fun onActivityResult(requestCode: Int, resultCode: Int, data: Intent?) {
+        super.onActivityResult(requestCode, resultCode, data)
         if (requestCode == MEDIA_SELECTION_CODE && resultCode == Activity.RESULT_OK && data != null) {
             val uri = data.data
             selectedImage = MediaStore.Images.Media.getBitmap(this.contentResolver, uri)
             imageView.setImageBitmap(selectedImage)
         }
-        super.onActivityResult(requestCode, resultCode, data)
     }
 
 
     override fun onRequestPermissionsResult(requestCode: Int, permissions: Array<out String>, grantResults: IntArray) {
+        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
         if (requestCode == PERMISSION_REQUEST_CODE && grantResults.firstOrNull() == PackageManager.PERMISSION_GRANTED) {
             openImageSelectionActivity()
         }
-        super.onRequestPermissionsResult(requestCode, permissions, grantResults)
     }
 
     private fun accessGranted(): Boolean {
-
         return checkSelfPermission(Manifest.permission.READ_EXTERNAL_STORAGE) == PackageManager.PERMISSION_GRANTED
     }
 
